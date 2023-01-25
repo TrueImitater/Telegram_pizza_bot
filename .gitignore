@@ -160,3 +160,4 @@ cython_debug/
 #.idea/
 
 bot_run.bat
+bad_words.json

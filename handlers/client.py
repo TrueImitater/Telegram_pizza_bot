@@ -1,5 +1,6 @@
 from aiogram import Dispatcher, types
 from aiogram.dispatcher.filters import Text
+from aiogram.types import ReplyKeyboardRemove
 from create_bot import bot
 from keyboards import client_kb
 from helper_info import HELP_TEXT, DESCRIPTION_TEXT, TIME_WORKING_TEXT
@@ -25,12 +26,12 @@ async def description(message: types.Message):
 
 # @dp.message_handler(Text(equals="Время работы"))
 async def get_time_work(message: types.Message):
-    await message.reply(text=TIME_WORKING_TEXT, parse_mode="HTML")
+    await message.reply(text=TIME_WORKING_TEXT, parse_mode="HTML", reply_markup=ReplyKeyboardRemove())
 
 
 # @dp.message_handler(Text(equals="Где находится?"))
 async def get_adress_pizza(message: types.Message):
-    await message.reply(text="Улица Победы\nДом 42")
+    await message.reply(text="Улица Победы\nДом 42", reply_markup=ReplyKeyboardRemove())
 
 
 def register_client_handlers(dp: Dispatcher):

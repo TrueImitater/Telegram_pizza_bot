@@ -1,1 +1,1 @@
-from keyboards import admin, client, other
+from keyboards import client_kb

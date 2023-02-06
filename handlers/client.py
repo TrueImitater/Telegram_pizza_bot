@@ -3,6 +3,7 @@ from aiogram.dispatcher.filters import Text
 from aiogram.types import ReplyKeyboardRemove
 from create_bot import bot
 from keyboards import client_kb
+from data_base import sqlite_db
 from helper_info import HELP_TEXT, DESCRIPTION_TEXT, TIME_WORKING_TEXT
 
 
@@ -34,6 +35,10 @@ async def get_adress_pizza(message: types.Message):
     await message.reply(text="Улица Победы\nДом 42", reply_markup=ReplyKeyboardRemove())
 
 
+async def get_pizza_menu(message: types.Message):
+    await sqlite_db.sql_read(message)
+
+
 def register_client_handlers(dp: Dispatcher):
     dp.register_message_handler(start, commands=['start'])
     dp.register_message_handler(help, commands=['help'])
@@ -41,3 +46,4 @@ def register_client_handlers(dp: Dispatcher):
     dp.register_message_handler(get_time_work, Text(equals='Время работы'))
     dp.register_message_handler(
         get_adress_pizza, Text(equals='Где находится?'))
+    dp.register_message_handler(get_pizza_menu, commands=["Меню"])

@@ -2,6 +2,8 @@ from aiogram import Dispatcher, types
 from aiogram.dispatcher.filters import Text
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import State, StatesGroup
+from data_base.sqlite_db import sql_add_command
+from keyboards import admin_kb
 
 
 class FSMAdmin(StatesGroup):
@@ -9,6 +11,14 @@ class FSMAdmin(StatesGroup):
     name = State()
     description = State()
     price = State()
+
+
+async def cm_open_keyboard(message: types.Message):
+    if (message.from_user.username == "Imitater"):
+        await message.answer("Клавиатура админа открыта!",
+                             reply_markup=admin_kb.edit_kb)
+    else:
+        await message.answer("ТЫ НЕ АДМИН!")
 
 
 # dp.message_handler(commands='Загрузить', state=None)
@@ -45,9 +55,7 @@ async def load_description(message: types.Message, state: FSMContext):
 async def load_price(message: types.Message, state: FSMContext):
     async with state.proxy() as data:
         data['price'] = float(message.text)
-
-    async with state.proxy() as data:
-        await message.reply(str(data))
+    await sql_add_command(state=state)
     # после этой команды полностью очищается словарь с данными, введеными во время состояния
     await state.finish()
 
@@ -61,10 +69,12 @@ async def cansel_handler(message: types.Message, state: FSMContext):
 
 
 def register_handlers_admin(dp: Dispatcher):
+    dp.register_message_handler(
+        cm_open_keyboard, Text(equals="Открыть клавиатуру"))
+    dp.register_message_handler(cm_start, commands=["Загрузить"], state=None)
     dp.register_message_handler(cansel_handler, state="*", commands='отмена')
     dp.register_message_handler(cansel_handler, Text(
         equals='отмена', ignore_case=True), state="*")
-    dp.register_message_handler(cm_start, commands=["Загрузить"], state=None)
     dp.register_message_handler(load_photo, content_types=[
                                 'photo'], state=FSMAdmin.photo)
     dp.register_message_handler(load_name, state=FSMAdmin.name)
